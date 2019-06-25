@@ -60,4 +60,12 @@ namespace :export do
     exporter = CicognaraMarc.new(cico_collection_id: coll, out_dir: output_dir)
     exporter.run
   end
+
+  desc "Export IIIF manifest links to PULFA DAOs"
+  task pulfa: :environment do
+    pulfa = ENV["PULFA"]
+    since = ENV["SINCE"] || (Time.zone.today - 14).strftime("%Y-%m-%d")
+    abort "usage: rake export:pulfa PULFA=[PULFA SVN dir] SINCE=[optional timestamp]" unless pulfa
+    PulfaExporter.new(pulfa, since).export
+  end
 end
