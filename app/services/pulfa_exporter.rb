@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+# Export Figgy content to PULFA, inserting DAOs into the EAD XML files linking to the Figgy manifest URLs
+# and creating two branches (one for Mudd, one for MSS) for review
 class PulfaExporter
   attr_reader :since_date, :svn_client, :logger
   def initialize(svn_dir:, since_date:, logger: Logger.new(STDOUT), svn_client: nil)
@@ -18,26 +20,28 @@ class PulfaExporter
 
   private
 
+    # all objects linked to finding aids that have been updated recently
     def updated_objects
       logger.info "Listing objects updated since #{since_date}"
       @updated_objects ||= Valkyrie.config.metadata_adapter.query_service.custom_queries.updated_archival_resources(since_date: since_date)
-      @updated_objects
     end
 
+    # updated objects, grouped by collection
     def grouped_objects
       @grouped_objects ||= updated_objects.group_by(&:archival_collection_code)
     end
 
+    # export everything from a group
     def export_branch(group:, include: nil, exclude: nil)
       logger.info "Exporting #{group}"
-      url = svn_client.create_branch(group)
+      branch_url = svn_client.create_branch(group)
       export_only(include) if include
       export_except(exclude) if exclude
       svn_client.commit
-      notify(group, url)
+      notify(group, branch_url)
     end
 
-    # export everything where the file starts with pattern
+    # export everything where the file includes the pattern
     def export_only(pattern)
       grouped_objects.keys.each do |collection_code|
         file = ead_for(collection_code)
@@ -45,7 +49,7 @@ class PulfaExporter
       end
     end
 
-    # export everything where the file doesn't start with pattern
+    # export everything where the file doesn't include the pattern
     def export_except(pattern)
       grouped_objects.keys.each do |collection_code|
         file = ead_for(collection_code)
@@ -77,6 +81,7 @@ class PulfaExporter
       File.open(filename, "w") { |f| f.puts(ead.to_xml) }
     end
 
+    # find a dao attached to this element, creating it if it doesn't exist
     def create_or_update_dao(ead, component, r)
       dao = component.at_xpath(".//ead:dao", namespaces_for_xpath) || create_dao_element(ead, component)
 
@@ -93,6 +98,7 @@ class PulfaExporter
       did.add_child(new_dao)
     end
 
+    # namespaces used in xpath queries
     def namespaces_for_xpath
       { xlink: "http://www.w3.org/1999/xlink", ead: "urn:isbn:1-931666-22-9" }
     end
