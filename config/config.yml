@@ -14,7 +14,6 @@ defaults: &defaults
   scanned_map_processing_note: <%= ENV.fetch('SCANNED_MAP_PROCESSING_NOTE', 'Scanned with an HD Ultra i4290s scanner using Nextimage 4.5.2 software') %>
   export_base: <%= ENV['FIGGY_EXPORT_BASE'] || Rails.root.join("tmp", "export") %>
   pulfa:
-    svn_base: "http://diglibsvn.princeton.edu/svn/pulfa"
     notify_mudd: "escowles@princeton.edu"
     notify_mss: "escowles@princeton.edu"
   default_search_directory: studio_new/DPUL

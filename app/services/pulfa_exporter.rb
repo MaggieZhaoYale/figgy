@@ -3,12 +3,10 @@
 # and creating two branches (one for Mudd, one for MSS) for review
 class PulfaExporter
   attr_reader :since_date, :svn_client, :logger
-  def initialize(svn_dir:, since_date:, logger: Logger.new(STDOUT), svn_client: nil)
+  def initialize(since_date:, logger: Logger.new(STDOUT), svn_client: nil)
     @logger = logger
     @since_date = since_date
-
-    svn_base = Figgy.config["pulfa"]["svn_base"]
-    @svn_client = svn_client || SvnClient.new(svn_base: svn_base, svn_dir: svn_dir)
+    @svn_client = svn_client || SvnClient.new
   end
 
   def export

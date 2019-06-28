@@ -2,12 +2,11 @@
 require "rails_helper"
 
 RSpec.describe PulfaExporter do
-  subject(:exporter) { described_class.new(svn_dir: svn_dir, since_date: since_date, logger: logger, svn_client: svn_client) }
-  let(:svn_client) { PulfaExporter::SvnClient.new(svn_base: svn_base, svn_dir: svn_dir, dry_run: true, logger: logger) }
+  subject(:exporter) { described_class.new(since_date: since_date, logger: logger, svn_client: svn_client) }
+  let(:svn_client) { PulfaExporter::SvnClient.new(dry_run: true, logger: logger) }
   let(:logger) { Logger.new(IO::NULL) }
-  let(:svn_base) { "http://localhost/svn/pulfa" }
   let(:svn_dir) { Rails.root.join("tmp", "svn") }
-  let(:eads_dir) { Rails.root.join("tmp", "svn", "eads") }
+  let(:eads_dir) { Rails.root.join("tmp", "svn", "pulfa", "eads") }
   let(:fixture_ead) { Rails.root.join("spec", "fixtures", "files", "pulfa", "C0652.EAD.xml") }
   let(:temp_ead) { Rails.root.join(eads_dir, "C0652.EAD.xml") }
   let(:component_id) { "C0652_c0377" }

@@ -63,9 +63,7 @@ namespace :export do
 
   desc "Export IIIF manifest links to PULFA DAOs"
   task pulfa: :environment do
-    pulfa = ENV["PULFA"]
     since = ENV["SINCE"] || (Time.zone.today - 14).strftime("%Y-%m-%d")
-    abort "usage: rake export:pulfa PULFA=[PULFA SVN dir] SINCE=[optional timestamp]" unless pulfa
-    PulfaExporter.new(pulfa, since).export
+    PulfaExporter.new(since).export
   end
 end
