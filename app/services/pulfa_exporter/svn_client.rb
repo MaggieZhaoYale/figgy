@@ -2,21 +2,24 @@
 # Subversion client for interacting with local copy of PULFA SVN repository
 class PulfaExporter
   class SvnClient
+    class SvnDirectoryError < StandardError; end
+
     attr_reader :dry_run, :logger
     def initialize(dry_run: false, logger: Logger.new(STDOUT))
       @dry_run = dry_run
       @logger = logger
+      raise SvnDirectoryError, "Not a directory: #{svn_dir}" unless File.directory?(svn_dir)
     end
 
     # commit local changes to the SVN server
-    def commit
-      svn_exec("commit")
+    def commit(group)
+      svn_exec("commit -m \"Figgy DAO links for #{group.titleize}\"")
     end
 
     # create a branch and switch to it
-    def create_branch(basename)
-      branch = "#{svn_url}/branches/#{basename}-#{today}"
-      svn_exec("copy #{svn_url}/trunk #{branch} -m \"#{basename} review #{today}\"")
+    def create_branch(group)
+      branch = "#{svn_url}/branches/#{group}-#{today}"
+      svn_exec("copy #{svn_url}/trunk #{branch} -m \"#{group.titleize} review #{today}\"")
       svn_exec("sw #{branch}")
       branch
     end

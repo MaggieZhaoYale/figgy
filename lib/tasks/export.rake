@@ -63,7 +63,11 @@ namespace :export do
 
   desc "Export IIIF manifest links to PULFA DAOs"
   task pulfa: :environment do
-    since = ENV["SINCE"] || (Time.zone.today - 14).strftime("%Y-%m-%d")
-    PulfaExporter.new(since).export
+    begin
+      since = ENV["SINCE"] || (Time.zone.today - 14).strftime("%Y-%m-%d")
+      PulfaExporter.new(since_date: since).export
+    rescue PulfaExporter::SvnClient::SvnDirectoryError => e
+      puts e.to_s
+    end
   end
 end

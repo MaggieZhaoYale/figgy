@@ -35,7 +35,7 @@ class PulfaExporter
       branch_url = svn_client.create_branch(group)
       export_only(include) if include
       export_except(exclude) if exclude
-      svn_client.commit
+      svn_client.commit(group)
       notify(group, branch_url)
     end
 
