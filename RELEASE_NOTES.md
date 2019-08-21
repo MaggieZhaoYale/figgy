@@ -13,6 +13,12 @@ Release notes template:
 ## Removed
 
 -->
+# 2019-08-21
+
+## Added
+
+* Process for automatically adding links to Figgy objects to finding aids as DAO elements.
+
 # 2019-08-20
 
 ## Changed
