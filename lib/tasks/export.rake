@@ -34,7 +34,7 @@ namespace :export do
 
   task collection_pdf: :environment do
     colid = ENV["COLL"]
-    abort "usage: rake export:archival_collection_pdfs COLL=[collection code]" unless colid
+    abort "usage: rake export:collection_pdf COLL=[collection id]" unless colid
     ExportCollectionPDFJob.perform_now(colid)
   end
 
