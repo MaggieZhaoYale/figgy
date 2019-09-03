@@ -95,6 +95,7 @@ class PulfaExporter
           update_dao(dao, "pdf/#{r.source_metadata_identifier.first.gsub(/.*_/, '')}.pdf")
         else
           update_dao(dao, Rails.application.routes.url_helpers.manifest_scanned_resource_url(r))
+          dao.set_attribute("xlink:role", "https://iiif.io/api/presentation/2.1/")
         end
       end
     end
@@ -111,7 +112,6 @@ class PulfaExporter
       dao.attribute_nodes.each(&:remove)
       dao.set_attribute("xlink:href", href)
       dao.set_attribute("xlink:type", "simple")
-      dao.set_attribute("xlink:role", "https://iiif.io/api/presentation/2.1/")
     end
 
     # create and attach a new dao element
