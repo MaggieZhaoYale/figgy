@@ -32,6 +32,7 @@ namespace :export do
     end
   end
 
+  desc "Export PDFs for every item in a collection"
   task collection_pdf: :environment do
     colid = ENV["COLL"]
     abort "usage: rake export:collection_pdf COLL=[collection id]" unless colid
