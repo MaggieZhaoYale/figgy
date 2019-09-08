@@ -33,6 +33,7 @@ RSpec.describe PulfaExporter do
 
   let(:ns) { { xlink: "http://www.w3.org/1999/xlink", ead: "urn:isbn:1-931666-22-9" } }
   let(:xpath) { "//ead:dao[@xlink:role='https://iiif.io/api/presentation/2.1/']/@xlink:href" }
+  let(:xpath2) { "//ead:dao/@xlink:href" }
 
   before do
     FileUtils.mkdir_p(eads_dir) unless File.directory?(eads_dir)
@@ -69,8 +70,10 @@ RSpec.describe PulfaExporter do
     it "adds a DAO link to exported PDFs" do
       expect { exporter.export_pdf(collection.id) }.not_to raise_error
       after = Nokogiri::XML(File.open(temp_ead))
-      pdf_links = ["pdf/#{component_code}.pdf", "pdf/#{component_code2}_0.pdf", "pdf/#{component_code2}_1.pdf"]
-      expect(after.xpath(xpath, ns).map(&:to_s)).to eq pdf_links
+      pdf_links = after.xpath(xpath2, ns).map(&:to_s)
+      expect(pdf_links).to include("pdf/#{component_code}.pdf")
+      expect(pdf_links).to include("pdf/#{component_code2}_0.pdf")
+      expect(pdf_links).to include("pdf/#{component_code2}_1.pdf")
     end
   end
 end
