@@ -129,5 +129,7 @@ class PulfaExporter
     # send email to configured address about branch being ready to review
     def notify(group, url)
       PulfaMailer.with(group: group, url: url).branch_notification.deliver_now
+    rescue Exception => e
+      puts "Error sending email: #{e}"
     end
 end
