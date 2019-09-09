@@ -62,6 +62,20 @@ RSpec.describe PulfaExporter do
       after = Nokogiri::XML(File.open(temp_ead))
       expect(after.at_xpath(xpath, ns).to_s).to eq "http://www.example.com/concern/scanned_resources/#{resource.id}/manifest"
     end
+
+    describe "when there is an error sending email" do
+      let(:mailer) { instance_double(PulfaMailer) }
+
+      before do
+        allow(logger).to receive(:warn)
+        allow(PulfaMailer).to receive(:with).and_raise(StandardError, "No route to host")
+      end
+
+      it "catches and logs the error" do
+        expect { exporter.export }.not_to raise_error
+        expect(logger).to have_received(:warn).exactly(2).times
+      end
+    end
   end
 
   describe "#export_pdf" do
